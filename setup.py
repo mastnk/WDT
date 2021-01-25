@@ -17,12 +17,12 @@ def read(fname):
 
 setup(
     name= 'WDT', # Application name:
-    version= '0.1.0', # Version number
+    version= '0.1.1', # Version number
 
     author= 'Masayuki Tanaka', # Author name
     author_email= 'mastnk@gmail.com', # Author mail
 
-    url='https://github.com/mastnk/watchdogtimer', # Details
+    url='https://github.com/mastnk/WDT', # Details
     description='Watch Dog Timer for python.', # short description
     long_description=read('README.rst'), # long description
     install_requires=[ # Dependent packages (distributions)

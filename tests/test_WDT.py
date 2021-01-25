@@ -44,13 +44,13 @@ class tests( unittest.TestCase ):
         self.assertTrue( t5 == 0 )
 
     def test_watchdogtimer(self):
-        def add1( x ):
-            return x+1
-        def add2( x ):
-            return x+2
+        def add1( x, y=1 ):
+            return x+y
+        def add2( x, y=0 ):
+            return x+y
 
-        wdt = WatchDogTimer( add1, {'x':1}, 0.2 )
-        wdt_stop = WatchDogTimer( add1, {'x':1}, 0.2 )
+        wdt = WatchDogTimer( 0.2, add1, 1 )
+        wdt_stop = WatchDogTimer( 0.2, add1, 1 )
         wdt.start()
         wdt_stop.start()
         wdt_stop.stop()
@@ -63,9 +63,9 @@ class tests( unittest.TestCase ):
         self.assertTrue( wdt.ret == 2 )
         self.assertFalse( wdt_stop.is_timeout )
 
-        wdt = WatchDogTimer( add1, {'x':1}, 0.1 )
+        wdt = WatchDogTimer( 0.1, add1, x=1 )
         wdt.start()
-        wdt.set_callback( add2, {'x':2} )
+        wdt.set_callback( add2, 2, y=2 )
         time.sleep(0.1)
         self.assertTrue( wdt.ret == 4 )
 

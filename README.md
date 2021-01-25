@@ -9,7 +9,7 @@ Watch Dog Timer and Timer for python
 
 ```% pip install WDT```
 
-## *class* WatchDogTimer
+## *class* WatchDogTimer(Thread)
 
 The WatchDogTimer is used to invoke a callback function when the timeout happens.
 After starting the WatchDogTimer, the application need "feed" the WatchDogTimer periodically if you want to prevent to invoke the callback.
@@ -18,19 +18,21 @@ If you do not "feed", the callback function would be invoked after the setting t
 
 ### Methods
 
-- __init__( self, callback, args_dict={}, time_sec=1, daemon=True )
+- __init__( self, time_sec, callback, *args, **kwargs )
 
-	**callback**: a function or a functor,
-
-	**args_dict**: an arguemnts of the function in the dictionary format,
+	Constructor.
 
 	**time_sec**: a setting time,
 
-	**daemon**: If it is true, the thread is daemonized.
+	**callback**: a function or a functor,
 
-- start( self ) -> None
+	***args**, ****kwargs**: arguemnts of the function,
+
+- start( self, daemon=True ) -> None
 
 	Start the WatchDogTimer.
+
+	**daemon**: If it is true, the thread is daemonized.
 
 - stop( self ) -> None
 
@@ -40,13 +42,19 @@ If you do not "feed", the callback function would be invoked after the setting t
 
 	Feed to the WatchDogTimer.
 
-- set_callback( self, callback=None, args_dict=None ) -> None
+- set_callback( self, callback, *args, **kwargs ) -> None
 
 	Change the *callback* and the *args_dict* if they are not None.
+
+	**callback**: a function or a functor,
+
+	***args**, ****kwargs**: arguemnts of the function.
 
 - set_time_sec( self, time_sec ) -> None
 
 	Change the *time_sec*.
+
+	**time_sec**: a setting time.
 
 ### Variables
 
@@ -93,14 +101,15 @@ It is a timer to measure the time with time.perf_counter.
 ## Sample code
 
 ```python
+
 from WDT import *
 
 import time
 
-def callback_func1( x ):
-	y = x+1
-	print( 'func1: ', x, '->', y )
-	return y
+def callback_func( x, y=1 ):
+    z = x+y
+    print( 'func: {}+{} -> {}'.format(x,y,z) )
+    return z
 
 pt0 = PerfTimer()
 pt1 = PerfTimer()
@@ -109,12 +118,13 @@ pt1 = PerfTimer()
 pt0.start()
 pt1.start()
 print( 'Sample1' )
-wdt = WatchDogTimer( callback_func1, {'x':1}, 0.2 )
+wdt = WatchDogTimer( 0.2, callback_func, 1 )
 wdt.start()
 for i in range(5):
-	wdt.feed()
-	time.sleep(0.1)
+    wdt.feed()
+    time.sleep(0.1)
 wdt.stop()
+print( 'ret: ', wdt.ret )
 pt0.stop()
 pt1.stop()
 print( pt0.get_time(), pt1.get_time() )
@@ -123,9 +133,10 @@ print( pt0.get_time(), pt1.get_time() )
 pt0.restart()
 pt1.start()
 print( 'Sample2' )
-wdt = WatchDogTimer( callback_func1, {'x':1}, 0.2 )
+wdt = WatchDogTimer( 0.2, callback_func, x=1 )
 wdt.start()
 time.sleep(0.3)
+print( 'ret: ', wdt.ret )
 pt0.stop()
 pt1.stop()
 print( pt0.get_time(), pt1.get_time() )
@@ -134,13 +145,14 @@ print( pt0.get_time(), pt1.get_time() )
 pt0.restart()
 pt1.start()
 print( 'Sample3' )
-wdt = WatchDogTimer( callback_func1, {'x':1}, 0.2 )
+wdt = WatchDogTimer( 0.2, callback_func, 1, y=1 )
 wdt.start()
 for i in range(5):
-	wdt.feed()
-	wdt.set_callback( None, {'x':i} )
-	time.sleep(0.1)
+    wdt.feed()
+    wdt.set_callback( callback_func, 1, y=2 )
+    time.sleep(0.1)
 time.sleep(0.3)
+print( 'ret: ', wdt.ret )
 pt0.stop()
 pt1.stop()
 print( pt0.get_time(), pt1.get_time() )

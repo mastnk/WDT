@@ -28,15 +28,14 @@ class PerfTimer:
         return s
 
 class WatchDogTimer(Thread):
-    def __init__( self, callback, args_dict={}, time_sec=1, daemon=True ):
+    def __init__( self, time_sec, callback, *args, **kwargs ):
         Thread.__init__(self)
-        self.daemon=daemon
-
         self.__lock = Lock()
 
-        self.__args_dict = args_dict
-        self.__callback=callback
         self.__time_sec = time_sec
+        self.__callback = callback
+        self.__args = args
+        self.__kwargs = kwargs
 
         self.__event = Event()
         self.__running = False
@@ -49,17 +48,16 @@ class WatchDogTimer(Thread):
                 # timeout
                 with self.__lock:
                     self.__is_timeout = True
-                    self.__ret = self.__callback( **self.__args_dict )
+                    self.__ret = self.__callback( *self.__args, **self.__kwargs  )
                     break
 
             self.__event.clear()
 
-    def set_callback( self, callback=None, args_dict=None ):
+    def set_callback( self, callback, *args, **kwargs ):
         with self.__lock:
-            if( callback is not None ):
-                self.__callback = callback
-            if( args_dict is not None ):
-                self.__args_dict = args_dict
+            self.__callback = callback
+            self.__args = args
+            self.__kwargs = kwargs
 
     def set_time_sec( seld, time_sec ):
         self.__time_sec = time_sec
@@ -68,9 +66,10 @@ class WatchDogTimer(Thread):
     def feed( self ):
         self.__event.set()
 
-    def start( self ):
+    def start( self, daemon=True ):
         if( not self.__running ):
             self.__running = True
+            self.daemon=daemon
             Thread.start(self)
 
     def stop( self ):
