@@ -66,6 +66,64 @@ If you do not "feed", the callback function would be invoked after the setting t
 
 	It is boolean which represents the WatchDogTimer is timeout or not.
 	
+- is_running
+
+	It is boolean which represents the WatchDogTimer is running or not.
+
+## *class* Periodic
+
+The Periodic is used to invoke a callback function periodically.
+If *compensate* is *True*, the period is the setting time.
+If *compensate* is *False*, the period is the settin time and the elapsed time of the callback function.
+
+### Methods
+
+- __init__( self, time_sec, callback, *args, **kwargs )
+
+	Constructor.
+
+	**time_sec**: a setting time,
+
+	**callback**: a function or a functor,
+
+	***args**, ****kwargs**: arguemnts of the function,
+
+- start( self, daemon=True, compensate=True ) -> None
+
+	Start the WatchDogTimer.
+
+	**daemon**: If it is true, the thread is daemonized.
+
+	**compensate**:
+
+- stop( self ) -> None
+
+	Stop the WatchDogTimer. The callback function is not invoked.
+
+- set_callback( self, callback, *args, **kwargs ) -> None
+
+	Change the *callback* and the *args_dict* if they are not None.
+
+	**callback**: a function or a functor,
+
+	***args**, ****kwargs**: arguemnts of the function.
+
+- set_time_sec( self, time_sec ) -> None
+
+	Change the *time_sec*.
+
+	**time_sec**: a setting time.
+
+### Variables
+
+- ret
+
+	It holds a retun velue of the callback function. If the callback function is not invoked, it is *None*.
+	
+- is_running
+
+	It is boolean which represents the WatchDogTimer is running or not.
+
 
 ## *class* PerfTimer
 
@@ -100,6 +158,7 @@ It is a timer to measure the time with time.perf_counter.
 
 ## Sample code
 
+sample1.py
 ```python
 
 from WDT import *
@@ -156,4 +215,42 @@ print( 'ret: ', wdt.ret )
 pt0.stop()
 pt1.stop()
 print( pt0.get_time(), pt1.get_time() )
+```
+
+
+sample2.py
+```python
+from WDT import *
+
+import time
+
+def callback_func( pt, x, y=1 ):
+    z = x+y
+    print( 'func: {}+{} -> {} ({})'.format(x,y,z, pt.get_time()) )
+    time.sleep(0.1)
+    return z
+
+pt = PerfTimer()
+pt.start()
+prd = Periodic( 0.2, callback_func, pt, 1 )
+prd.start(compensate=True)
+time.sleep(1)
+prd.stop()
+print()
+
+pt = PerfTimer()
+pt.start()
+prd = Periodic( 0.2, callback_func, pt, 2 )
+prd.start(compensate=False)
+time.sleep(1)
+prd.stop()
+print()
+
+pt = PerfTimer()
+pt.start()
+prd = Periodic( 0.1, callback_func, pt, 3 )
+prd.start(compensate=True)
+time.sleep(1)
+prd.stop()
+print()
 ```

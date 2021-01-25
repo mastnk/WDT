@@ -1,4 +1,5 @@
 import time
+import warnings
 from threading import Thread, Event,Lock
 
 class PerfTimer:
@@ -85,3 +86,70 @@ class WatchDogTimer(Thread):
     @property
     def is_timeout( self ):
         return self.__is_timeout
+
+    @property
+    def is_running( self ):
+        return self.__is_running
+
+
+class Periodic(Thread):
+    def __init__( self, time_sec, callback, *args, **kwargs ):
+        Thread.__init__(self)
+        self.__lock = Lock()
+
+        Thread.__init__(self)
+        self.__lock = Lock()
+
+        self.__time_sec = time_sec
+        self.__callback = callback
+        self.__args = args
+        self.__kwargs = kwargs
+
+        self.__event = Event()
+        self.__running = False
+        self.__ret = None
+
+        self.__timer = PerfTimer()
+
+    def run( self ):
+        while( self.__running ):
+            with self.__lock:
+                self.__timer.restart()
+                self.__ret = self.__callback( *self.__args, **self.__kwargs  )
+
+            sec = self.__time_sec
+            if( self.compensate ):
+                sec -= self.__timer.get_time()
+            if( sec > 0 ):
+                self.__event.wait(timeout=sec)
+                self.__event.clear()
+            else:
+                msg = 'callback takes longer than periodic time.'
+                warnings.warn( msg )
+
+    def start( self, daemon=True, compensate=True ):
+        self.compensate = compensate
+        if( not self.__running ):
+            self.__running = True
+            self.daemon=daemon
+            Thread.start(self)
+
+    def stop( self ):
+        if( self.__running ):
+            self.__running = False
+            self.__event.set()
+            self.join()
+
+    def set_callback( self, callback, *args, **kwargs ):
+        with self.__lock:
+            self.__callback = callback
+            self.__args = args
+            self.__kwargs = kwargs
+
+    @property
+    def ret( self ):
+        return self.__ret
+
+    @property
+    def is_running( self ):
+        return self.__is_running

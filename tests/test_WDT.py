@@ -27,22 +27,23 @@ class tests( unittest.TestCase ):
         t = PerfTimer()
         t0 = t.get_time()
         t.start()
-        self.assertTrue( t0 == 0 )
+        self.assertEqual( t0, 0 )
         t1 = t.get_time()
-        self.assertTrue( t0 < t1 )
+        self.assertLess( t0, t1 )
         t2 = t.stop()
-        self.assertTrue( t1 < t2 )
+        self.assertLess( t1, t2 )
 
         t3 = t.get_time()
-        self.assertTrue( t2 == t3 )
+        self.assertEqual( t2, t3 )
         t.start()
         t4 = t.get_time()
-        self.assertTrue( t3 < t4 )
+        self.assertLess( t3, t4 )
 
         t.reset()
         t5 = t.get_time()
-        self.assertTrue( t5 == 0 )
+        self.assertEqual( t5, 0 )
 
+###################################################################
     def test_watchdogtimer(self):
         def add1( x, y=1 ):
             return x+y
@@ -60,14 +61,31 @@ class tests( unittest.TestCase ):
             time.sleep(0.1)
         self.assertFalse( wdt.is_timeout )
         time.sleep(0.2)
-        self.assertTrue( wdt.ret == 2 )
+        self.assertEqual( wdt.ret, 2 )
         self.assertFalse( wdt_stop.is_timeout )
 
         wdt = WatchDogTimer( 0.1, add1, x=1 )
         wdt.start()
         wdt.set_callback( add2, 2, y=2 )
         time.sleep(0.1)
-        self.assertTrue( wdt.ret == 4 )
+        self.assertEqual( wdt.ret, 4 )
+
+###################################################################
+    def test_periodic(self):
+        def add( x, y=1, sleep=0.1 ):
+            time.sleep(sleep)
+            return x+y
+
+        prd = Periodic( 0.2, add, 1 )
+        prd.start()
+
+        time.sleep( 0.15 )
+        self.assertEqual( prd.ret, 2 )
+        prd.set_callback( add, 2 )
+        time.sleep( 0.15 )
+        self.assertEqual( prd.ret, 3 )
+
+        prd.stop()
 
 
 ###################################################################

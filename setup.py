@@ -4,6 +4,8 @@
 # convert README.md to README.rst
 # pandoc --from markdown --to rst README.md -o README.rst
 
+
+
 # uninstall
 # % python setup.py install --record installed_files
 # % cat installed_files | xargs rm -rf
@@ -17,7 +19,7 @@ def read(fname):
 
 setup(
     name= 'WDT', # Application name:
-    version= '0.1.1', # Version number
+    version= '0.2.0', # Version number
 
     author= 'Masayuki Tanaka', # Author name
     author_email= 'mastnk@gmail.com', # Author mail
