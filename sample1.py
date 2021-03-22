@@ -1,6 +1,7 @@
 from WDT import *
 
 import time
+import random
 
 def callback_func( x, y=1 ):
     z = x+y
@@ -52,4 +53,18 @@ print( 'ret: ', wdt.ret )
 pt0.stop()
 pt1.stop()
 print( pt0.get_time(), pt1.get_time() )
+
+###
+print( 'Sample4' )
+sfp = SleepForPeriodic( 1 ) # in sec
+for i in range(10):
+    sfp.start()
+
+    ## some process
+    t = random.random()
+    print( t )
+    time.sleep( t )
+    ##
+
+    sfp.sleep()
 

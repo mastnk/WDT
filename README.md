@@ -9,6 +9,8 @@ Watch Dog Timer and Timer for python
 
 ```% pip install WDT```
 
+python 3.6.0 or later is required.
+
 ## *class* WatchDogTimer(Thread)
 
 The WatchDogTimer is used to invoke a callback function when the timeout happens.
@@ -18,7 +20,7 @@ If you do not "feed", the callback function would be invoked after the setting t
 
 ### Methods
 
-- __init__( self, time_sec, callback, *args, **kwargs )
+- \_\_init\_\_( self, time_sec, callback, *args, **kwargs )
 
 	Constructor.
 
@@ -78,7 +80,7 @@ If *compensate* is *False*, the period is the settin time and the elapsed time o
 
 ### Methods
 
-- __init__( self, time_sec, callback, *args, **kwargs )
+- \_\_init\_\_( self, time_sec, callback, *args, **kwargs )
 
 	Constructor.
 
@@ -131,7 +133,7 @@ It is a timer to measure the time with time.perf_counter.
 
 ### Methods
 
-- __init__( self )
+- \_\_init\_\_( self )
 
 	The constructor
 
@@ -155,6 +157,25 @@ It is a timer to measure the time with time.perf_counter.
 - get_time( self ) -> float
 
 	Return the time.
+
+## *class* SleepForPeriodic
+
+It is sleep for periodic process.
+
+### Methods
+
+- \_\_init\_\_( self, interval )
+
+	The constructor.
+	_interval_ is specfied in sec.
+	
+- start( self )
+
+	It is called at the begining of periodical process.
+
+- sleep( self )
+
+	It is called at the end of periodical process. Then, sleep necessary time for periodic process.
 
 ## Sample code
 
@@ -253,4 +274,16 @@ prd.start(compensate=True)
 time.sleep(1)
 prd.stop()
 print()
+
+sfp = SleepForPeriodic( 1 ) # in sec
+while( True ):
+    sfp.start()
+​
+    ## some process
+    t = random.random()
+    print( t )
+    time.sleep( t )
+    ##
+​
+    sfp.sleep()
 ```

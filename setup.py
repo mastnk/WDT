@@ -2,9 +2,13 @@
 # -*- coding: utf-8 -*-
 
 # convert README.md to README.rst
-# pandoc --from markdown --to rst README.md -o README.rst
+# % pandoc --from markdown --to rst README.md -o README.rst
 
+# make distribution
+# % python setup.py sdist bdist_wheel
 
+# upload to pypi
+# % twine upload --repository pypi dist/*
 
 # uninstall
 # % python setup.py install --record installed_files
@@ -19,7 +23,7 @@ def read(fname):
 
 setup(
     name= 'WDT', # Application name:
-    version= '0.2.0', # Version number
+    version= '0.3.0', # Version number
 
     author= 'Masayuki Tanaka', # Author name
     author_email= 'mastnk@gmail.com', # Author mail

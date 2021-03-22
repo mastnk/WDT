@@ -32,3 +32,14 @@ time.sleep(1)
 prd.stop()
 print()
 
+sfp = SleepForPeriodic( 1 ) # in sec
+while( True ):
+    sfp.start()
+​
+    ## some process
+    t = random.random()
+    print( t )
+    time.sleep( t )
+    ##
+​
+    sfp.sleep()

@@ -153,3 +153,17 @@ class Periodic(Thread):
     @property
     def is_running( self ):
         return self.__is_running
+
+class SleepForPeriodic:
+    def __init__( self, interval ): # [sec]
+        self.interval = interval
+        self.timer = PerfTimer()
+
+    def start( self ):
+        self.timer.restart()
+
+    def sleep( self ):
+        t = self.timer.get_time()
+        if( self.interval - t > 0 ):
+            time.sleep( self.interval - t )
+
