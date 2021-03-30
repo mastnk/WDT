@@ -1,6 +1,6 @@
-from .WDT import PerfTimer
-from .WDT import WatchDogTimer
-from .WDT import Periodic
-from .WDT import SleepForPeriodic
+from .wdt import PerfTimer
+from .wdt import WatchDogTimer
+from .wdt import Periodic
+from .wdt import SleepForPeriodic
 
 __all__ = ['PerfTimer', 'WatchDogTimer', 'Periodic', 'SleepForPeriodic']

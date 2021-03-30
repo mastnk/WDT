@@ -23,7 +23,7 @@ def read(fname):
 
 setup(
     name= 'WDT', # Application name:
-    version= '0.3.0', # Version number
+    version= '0.3.1', # Version number
 
     author= 'Masayuki Tanaka', # Author name
     author_email= 'mastnk@gmail.com', # Author mail
